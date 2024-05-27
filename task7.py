@@ -1,5 +1,6 @@
 import random
 import matplotlib.pyplot as plt
+import math
 
 # симуляція кидків кубиків
 def roll_dice_simulation(num_rolls):
@@ -14,9 +15,16 @@ def calculate_probabilities(results, num_rolls):
     probabilities = {k: v / num_rolls * 100 for k, v in results.items()}
     return probabilities
 
+# обчислення RMSE
+def calculate_rmse(simulated_probs, analytical_probs):
+    differences = [(simulated_probs[sum_value] - analytical_probs[sum_value]) ** 2 for sum_value in simulated_probs]
+    mean_square_error = sum(differences) / len(differences)
+    rmse = math.sqrt(mean_square_error)
+    return rmse
+
 if __name__ == "__main__":
     # задаємо кількість симуляцій
-    num_rolls = 10000
+    num_rolls = 1000000
 
     simulation_results = roll_dice_simulation(num_rolls)
     simulated_probabilities = calculate_probabilities(simulation_results, num_rolls)
@@ -36,10 +44,15 @@ if __name__ == "__main__":
         12: 2.78
     }
 
+    # рахуємо RMSE
+    rmse = calculate_rmse(simulated_probabilities, analytical_probabilities)
+    
     # порівняння результатів
     print(f"{'Сума':<4} {'Ймовірність (Монте-Карло)':<26} {'Ймовірність (Аналітична)':<26}")
     for sum_value in range(2, 13):
         print(f"{sum_value:<4} {simulated_probabilities[sum_value]:<26.2f} {analytical_probabilities[sum_value]:<26.2f}")
+
+    print(f"\nСередньоквадратичне відхилення (RMSE): {rmse:.4f}")
 
     # будуємо графік
     sums = list(simulated_probabilities.keys())

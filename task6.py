@@ -13,7 +13,7 @@ def find_items_greedy(budget, items):
 
     for item, cost, calories, _ in sorted_items:
         if remaining_budget >= cost:
-            num_items = remaining_budget // cost
+            num_items = 1  # вибираємо кожен предмет тільки один раз
             remaining_budget -= num_items * cost
             result[item] = num_items
     
@@ -27,20 +27,30 @@ def find_max_calories_dp(budget, items):
     calories = [items[item]['calories'] for item in item_names]
     n = len(items)
     
-    dp = [0] * (budget + 1)
-    item_count = [{} for _ in range(budget + 1)]
+    dp = [[0] * (budget + 1) for _ in range(n + 1)]
+    item_taken = [[False] * (budget + 1) for _ in range(n + 1)]
 
-    for i in range(n):
-        for j in range(costs[i], budget + 1):
-            if dp[j - costs[i]] + calories[i] > dp[j]:
-                dp[j] = dp[j - costs[i]] + calories[i]
-                item_count[j] = item_count[j - costs[i]].copy()
-                if item_names[i] in item_count[j]:
-                    item_count[j][item_names[i]] += 1
+    for i in range(1, n + 1):
+        for w in range(budget + 1):
+            if costs[i - 1] <= w:
+                if dp[i - 1][w - costs[i - 1]] + calories[i - 1] > dp[i - 1][w]:
+                    dp[i][w] = dp[i - 1][w - costs[i - 1]] + calories[i - 1]
+                    item_taken[i][w] = True
                 else:
-                    item_count[j][item_names[i]] = 1
+                    dp[i][w] = dp[i - 1][w]
+            else:
+                dp[i][w] = dp[i - 1][w]
 
-    return item_count[budget]
+    result = {}
+    w = budget
+    for i in range(n, 0, -1):
+        if item_taken[i][w]:
+            item = item_names[i - 1]
+            result[item] = 1
+            w -= costs[i - 1]
+    
+    return result
+
 
 
 if __name__ == "__main__":
