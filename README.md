@@ -15,5 +15,6 @@
 
 
 10 тис ітерацій
+
 ![10000](https://github.com/Serhii-Khodyka/goit-algo-fp/assets/155672103/b0dfe22c-bcf1-4d14-a9d4-06ec2e311705)
 
